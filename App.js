@@ -1,114 +1,129 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+import React, {Component} from 'react';
 
-import React from 'react';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
+import Tabs from './src/components/Tabs';
+// import FindFixer from './src/components/FindFixer';
+import RequestDetails from './src/components/Tabs/RequestDetails';
+import NavigationService from './src/services/navigate';
+import ProfileDetails from './src/components/Tabs/ProfileDetails';
+import ProfileEditor from './src/components/Tabs/ProfileEditor';
+
+import Login from './src/components/Screens/Login';
+import LoginByPhone from './src/components/Screens/LoginByPhone';
+import Verification from './src/components/Screens/Verification';
+import CreateRequest from './src/components/Screens/CreateRequest';
+import FindFixer from './src/components/Screens/FindFixer';
+
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
+  ApplicationProvider,
+  Layout,
   Text,
-  StatusBar,
-} from 'react-native';
+  IconRegistry,
+} from 'react-native-ui-kitten';
+import {mapping, light as lightTheme} from '@eva-design/eva';
+import {EvaIconsPack} from '@ui-kitten/eva-icons';
+import SelectLocation from './src/components/Screens/SelectLocation';
+import Rate from './src/components/Screens/Rate';
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
-};
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+const RootStack = createStackNavigator(
+  {
+    Login: {
+      screen: Login,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    LoginByPhone: {
+      screen: LoginByPhone,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    Verification: {
+      screen: Verification,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    CreateRequest: {
+      screen: CreateRequest,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    Tabs: {
+      screen: Tabs,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    RequestDetails: {
+      screen: RequestDetails,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    ProfileDetails: {
+      screen: ProfileDetails,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    ProfileEditor: {
+      screen: ProfileEditor,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    FindFixer: {
+      screen: FindFixer,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    SelectLocation: {
+      screen: SelectLocation,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
+    Rating: {
+      screen: Rate,
+      navigationOptions: {
+        header: null,
+        gesturesEnabled: false,
+      },
+    },
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
+  {
+    initialRouteName: 'Login',
   },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
-
-export default App;
+);
+const AppContainer = createAppContainer(RootStack);
+export default class App extends Component {
+  render() {
+    return (
+      <>
+        <IconRegistry icons={EvaIconsPack} />
+        <ApplicationProvider mapping={mapping} theme={lightTheme}>
+          <AppContainer
+            ref={navigatorRef => {
+              NavigationService.setTopLevelNavigator(navigatorRef);
+            }}
+          />
+        </ApplicationProvider>
+      </>
+    );
+  }
+}
