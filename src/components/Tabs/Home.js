@@ -44,10 +44,10 @@ export default class Home extends Component {
     );
     if (!this.state.found) {
       setInterval(() => {
-        if (this.state.statusIsOn) {
-          setTimeout(() => this.setState({found: true}), 4000);
+        if (this.state.statusIsOn == true && this.state.found == false) {
+          setTimeout(() => this.setState({found: true}), 3000);
         }
-      }, 4000);
+      }, 3000);
     }
   }
 
@@ -56,12 +56,24 @@ export default class Home extends Component {
       <View style={{flex: 1}}>
         <View style={styles.statusContainer}>
           <TouchableOpacity
-            onPress={() =>
-              this.setState({
-                statusIsOn: !this.state.statusIsOn,
-                switchOn: false,
-              })
-            }
+            onPress={() => {
+              if (this.state.found == false) {
+                console.log('huhu');
+
+                this.setState({
+                  statusIsOn: !this.state.statusIsOn,
+                  found: false,
+                });
+                if (this.state.statusIsOn == true) {
+                  console.log('hahaha');
+                  this.setState({autoAccept: false});
+                }
+              } else if (
+                this.state.found == true &&
+                this.state.statusIsOn == false
+              )
+                this.setState({found: false});
+            }}
             style={[
               styles.outsidePowerBorder,
               {
@@ -97,9 +109,12 @@ export default class Home extends Component {
             }}
             size="medium"
             onToggle={isOn => {
-              if (!this.state.found) {
+              if (this.state.found == false) {
+                console.log('k found');
                 this.setState({autoAccept: isOn});
-                if (!this.state.statusIsOn) this.setState({autoAccept: false});
+                if (this.state.statusIsOn == false) {
+                  this.setState({autoAccept: false});
+                }
               }
             }}
           />
@@ -111,7 +126,7 @@ export default class Home extends Component {
             flex: 1,
           }}>
           <View style={{flex: 1}}>
-            {!this.state.statusIsOn ? (
+            {this.state.statusIsOn == false ? (
               <View
                 style={{
                   flex: 1,
@@ -134,7 +149,7 @@ export default class Home extends Component {
                   />
                 </View>
               </View>
-            ) : this.state.statusIsOn && !this.state.found ? (
+            ) : this.state.statusIsOn == true && this.state.found == false ? (
               <View
                 style={{
                   flex: 1,
@@ -171,6 +186,32 @@ export default class Home extends Component {
                   justifyContent: 'center',
                 }}>
                 <View style={styles.foundContainer}>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      top: 11,
+                      right: 10,
+                      width: 52,
+                      height: 52,
+                    }}>
+                    {this.state.autoAccept == false ? (
+                      <CountdownCircle
+                        seconds={10}
+                        radius={26}
+                        borderWidth={7}
+                        color="#3ddc84"
+                        bgColor="#fff"
+                        textStyle={{fontSize: 20}}
+                        onTimeElapsed={() => {
+                          this.setState({
+                            found: false,
+                          });
+                        }}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </View>
                   <View
                     style={{
                       width: 130,
@@ -214,13 +255,13 @@ export default class Home extends Component {
                     style={{
                       alignItems: 'flex-start',
                       width: '90%',
-                      height: 100,
+                      height: 90,
                       marginHorizontal: '5%',
                       marginVertical: 15,
                       borderWidth: 1,
                       borderColor: '#c9c9c9',
                       borderRadius: 10,
-                      paddingVertical: 10,
+                      paddingVertical: 20,
                     }}>
                     <FontText
                       emphasis="bold"
@@ -231,78 +272,117 @@ export default class Home extends Component {
                       }}>
                       Ghi chú dành cho thợ:{' '}
                     </FontText>
-                    <FontText style={{padding: 10}}>
+                    <FontText style={{paddingHorizontal: 10}}>
                       Thợ đến nhớ gọi trước 10p để chuẩn bị trà bánh.
                     </FontText>
                   </View>
                   {!this.state.autoAccept ? (
                     <View
                       style={{
+                        alignItems: 'center',
                         width: '100%',
-                        paddingHorizontal: '9%',
-                        marginVertical: 5,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        position: 'relative',
                       }}>
-                      <Button
-                        TouchableOpacity
-                        onPress={() => this.setState({found: false})}
-                        appearance="outline"
-                        icon={style => (
-                          <IconUI
-                            {...style}
-                            name="arrowhead-left-outline"
-                            style={{marginRight: -5}}
-                          />
-                        )}
-                        status="danger"
+                      <View
                         style={{
+                          width: '100%',
+                          paddingHorizontal: '9%',
                           flexDirection: 'row',
-                          width: 125,
+                          justifyContent: 'space-between',
                         }}>
-                        Từ chối
-                      </Button>
-                      <Button
-                        TouchableOpacity
-                        onPress={() =>
-                          NavigationService.navigate('RequestDetails', {
-                            status: 'Đang thực hiện',
-                          })
-                        }
-                        appearance="outline"
-                        icon={style => (
-                          <IconUI
-                            {...style}
-                            name="arrowhead-right-outline"
-                            style={{marginLeft: -5}}
-                          />
-                        )}
-                        status="info"
+                        <Button
+                          TouchableOpacity
+                          onPress={() => this.setState({found: false})}
+                          appearance="outline"
+                          icon={style => (
+                            <IconUI
+                              {...style}
+                              name="arrowhead-left-outline"
+                              style={{marginRight: -5}}
+                            />
+                          )}
+                          status="danger"
+                          style={{
+                            flexDirection: 'row',
+                            width: 125,
+                          }}>
+                          Từ chối
+                        </Button>
+                        <Button
+                          TouchableOpacity
+                          onPress={() => {
+                            this.setState({
+                              found: false,
+                              statusIsOn: false,
+                              autoAccept: false,
+                            });
+                            NavigationService.navigate('RequestDetails', {
+                              status: 'Đang thực hiện',
+                            });
+                          }}
+                          appearance="outline"
+                          icon={style => (
+                            <IconUI
+                              {...style}
+                              name="arrowhead-right-outline"
+                              style={{marginLeft: -5}}
+                            />
+                          )}
+                          status="info"
+                          style={{
+                            flexDirection: 'row-reverse',
+                            width: 125,
+                          }}>
+                          Chấp nhận
+                        </Button>
+                      </View>
+                      <FontText
                         style={{
-                          flexDirection: 'row-reverse',
-                          width: 125,
+                          fontSize: 11,
+                          position: 'absolute',
+                          bottom: -20,
+                          zIndex: 5,
                         }}>
-                        Chấp nhận
-                      </Button>
+                        Tự động từ chối sau 10 giây.
+                      </FontText>
                     </View>
                   ) : (
                     <View style={{height: 46}}>
-                      {/* <FontText style={{fontSize: 19}}>
-                        Đã chấp nhận yêu cầu sửa chữa...
-                      </FontText> */}
+                      {/* <View
+                        style={{
+                          flex: 1,
+                          paddingHorizontal: '10%',
+                          backgroundColor: 'red',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          position: 'relative',
+                        }}>
+                        <FontText style={{fontSize: 17}}>Đang tạo</FontText>
+                        <FontText style={{fontSize: 17}}>
+                          phiên sửa chữa
+                        </FontText>
+                        <View style={{position: 'absolute', bottom: -10}}> */}
                       <CountdownCircle
-                        seconds={10}
-                        radius={27}
+                        seconds={5}
+                        radius={28}
                         borderWidth={7}
                         color="#3ddc84"
                         bgColor="#fff"
                         textStyle={{fontSize: 20}}
-                        onTimeElapsed={() =>
+                        onTimeElapsed={() => {
+                          this.setState({
+                            found: false,
+                            statusIsOn: false,
+                            autoAccept: false,
+                          });
                           NavigationService.navigate('RequestDetails', {
                             status: 'Đang thực hiện',
-                          })
-                        }
+                          });
+                        }}
                       />
+                      {/* </View> */}
+                      {/* </View> */}
                     </View>
                   )}
                   <IconE
@@ -378,10 +458,11 @@ const styles = StyleSheet.create({
   },
   foundContainer: {
     width: '80%',
-    height: 400,
+    height: 390,
     backgroundColor: 'white',
     borderRadius: 30,
     alignItems: 'center',
+    position: 'relative',
     zIndex: 4,
 
     shadowColor: '#000',
